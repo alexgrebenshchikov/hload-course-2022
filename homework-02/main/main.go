@@ -5,19 +5,19 @@ import (
 
 	//"context"
 
-	"github.com/go-redis/redis/v8"
+	//"time"
 
+	"github.com/go-redis/redis/v8"
 	//"github.com/go-zookeeper/zk"
 
 	"dqueue"
-
 	"os"
 )
 
 func main() {
 	argsWithoutProg := os.Args[1:]
-	if len(argsWithoutProg) != 4 {
-		fmt.Println("error: wrong number of args - expected 4 addresses of redis shards")
+	if len(argsWithoutProg) != 7 {
+		fmt.Println("error: wrong number of args - expected 4 addresses of redis shards and 3 addresses of zk cluster")
 		return
 	}
 	redisOptions1 := redis.Options{
@@ -43,11 +43,20 @@ func main() {
 	}
 
 	var redisOptions = []*redis.Options{&redisOptions1, &redisOptions2, &redisOptions3, &redisOptions4}
+	var zkCluster = []string{argsWithoutProg[4], argsWithoutProg[5], argsWithoutProg[6]}
 
-	dqueue.Config(&redisOptions, []string{"127.0.0.1"})
-	_, err := dqueue.Open("alex-greben:queue1", 4)
+	dqueue.Config(&redisOptions, zkCluster)
+	dq, err := dqueue.Open("alex-greben-queue2", 4)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
+	err = dq.Push("1")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	val, err := dq.Pull()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(val)
 }
