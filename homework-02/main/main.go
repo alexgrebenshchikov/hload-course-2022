@@ -48,11 +48,11 @@ func main() {
 	dqueue.Config(&redisOptions, zkCluster)
 	dq, err := dqueue.Open("alex-greben-queue2", 4)
 	if err != nil {
-		fmt.Println(err.Error())
+		panic(err)
 	}
 	err = dq.Push("1")
 	if err != nil {
-		fmt.Println(err.Error())
+		panic(err)
 	}
 	val, err := dq.Pull()
 	if err != nil {

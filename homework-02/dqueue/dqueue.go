@@ -185,6 +185,18 @@ func (q *DQueue) Push(value string) error {
  *
  */
 func (q *DQueue) Pull() (string, error) {
+	c, _, err := zk.Connect(zkClusterAddrs, time.Second*10)
+	if err != nil {
+		return "", err
+	}
+	defer c.Close()
+
+	queuePath := zkHead + "/" + q.name
+	err = Lock(c, queuePath)
+	if err != nil {
+		return "", err
+	}
+
 	var min_time time.Time
 	var is_min_time_init = false
 	var res string = ""
