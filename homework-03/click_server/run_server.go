@@ -18,9 +18,6 @@ import (
 	lr "main/local_redis"
 )
 
-// localhost:8081
-// 158.160.9.8:26379
-// 158.160.19.212:26379
 func main() {
 	argsWithoutProg := os.Args[1:]
 	if len(argsWithoutProg) != 3 {
